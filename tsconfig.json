@@ -16,8 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "strictFunctionTypes": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "experimentalDecorators": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
@@ -25,15 +25,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": [
-      "vite/client",
-      "element-plus/global",
-      "@types/qrcode",
-      "vite-plugin-svg-icons/client",
-      "./auto-imports.d.ts",
-      "./components.d.ts"
-    ]
+    "types": ["vite/client", "element-plus/global", "@types/qrcode", "vite-plugin-svg-icons/client", "./auto-imports.d.ts", "./components.d.ts"]
   },
   "include": ["src", "types/**/*.d.ts", "mock/**/*.ts"],
-  "exclude": ["src/utils/SM4.js"]
+  "exclude": ["src/utils/SM4.js", "auto-imports.d.ts"]
 }

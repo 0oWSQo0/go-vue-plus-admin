@@ -10,19 +10,19 @@
     width: 300px;
   }
 }
-
+// 表格
 .el-table {
-  .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+  .el-table__header-wrapper,
+  .el-table__fixed-header-wrapper {
     th {
       background-color: #e5e5e8 !important;
       color: rgb(69, 70, 70);
     }
-    
   }
-}
-// 表格操作按钮间隔
-.el-table {
   .el-button.is-link + .el-button.is-link {
-    margin-left: 0;
+    margin: 0 2px;
+  }
+  .el-button [class*='el-icon'] + span {
+    margin-left: 4px;
   }
 }

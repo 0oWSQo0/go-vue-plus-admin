@@ -1,10 +1,5 @@
 <script setup lang="tsx">
-import { Regular } from '@/utils/validate'
-import { useValidator } from '@/hooks/useValidator'
-import { useForm } from '@/hooks/useForm'
 import type { DescriptionsSchema } from '@/components/Descriptions'
-
-const { proxy } = getCurrentInstance() as any
 
 const currentItem = ref<any>({})
 const open = ref(false)
@@ -17,7 +12,7 @@ const schema = ref<DescriptionsSchema[]>([
   { class: '!text-center', field: 'jsonResult', label: '返回参数', span: 24 },
   { class: '!text-center', field: 'status', label: '操作状态' },
   { class: '!text-center', field: 'createTime', label: '操作时间' },
-  { class: '!text-center', field: 'errorMsg', label: '异常信息', span: 24 },
+  { class: '!text-center', field: 'errorMsg', label: '异常信息', span: 24 }
 ])
 
 const reset = async () => {

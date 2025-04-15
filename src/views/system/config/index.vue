@@ -40,13 +40,14 @@
 import { listConfig, getConfig, delConfig, refreshCache } from '@/api/system/config'
 import EditModal from './EditModal.vue'
 import { useSearch } from '@/hooks/useSearch'
+import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
 const { sys_yes_no } = proxy.useDict('sys_yes_no')
 
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive([
+const searchSchema = reactive<FormSchema[]>([
   { label: '参数名称', field: 'configName', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '参数键名', field: 'configKey', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '系统内置', field: 'configType', component: 'Select', componentProps: { options: sys_yes_no } },

@@ -15,7 +15,6 @@ export const getAllParentPath = <T = Recordable>(treeData: T[], path: string) =>
 
 export const hasOneShowingChild = (children: AppRouteRecordRaw[] = [], parent: AppRouteRecordRaw): HasOneShowingChild => {
   const onlyOneChild = ref<OnlyOneChildType>()
-
   const showingChildren = children.filter((v) => {
     const meta = v.meta ?? {}
     if (meta.hidden) {

@@ -2,15 +2,14 @@
 import { useDesign } from '@/hooks/useDesign'
 import { loginApi, getCodeApi, getUserInfoApi, randomStringApi } from '@/api/login'
 import { useAppStore } from '@/store/modules/app'
-// import { usePermissionStore } from '@/store/modules/permission'
 import { useRouter } from 'vue-router'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useValidator } from '@/hooks/useValidator'
 import { useUserStore } from '@/store/modules/user'
-import { sm3 } from 'sm-crypto'
+// import { sm3 } from 'sm-crypto'
 import { LoginTypeEnum } from './types'
 import { openDevice, openApp, getKeyInfo, checkPin, generateRandom, sm2Sign, sm3 as bsm3, openContainer } from '@/utils/BHA'
-import { getConfigKey } from '@/api/system/config'
+// import { getConfigKey } from '@/api/system/config'
 import { Base64 } from 'js-base64'
 
 const { proxy } = getCurrentInstance() as any
@@ -46,11 +45,10 @@ const handleLogin = async () => {
 const commonLogin = async () => {
   loading.value = true
   try {
-    const { token }: any = await loginApi({ ...form.value, password: sm3(unref(form).password) })
-    userStore.setToken(token)
-    const { user }: any = await getUserInfoApi()
-    userStore.setUserInfo(user)
-    // getRouters()
+    const { data }: any = await loginApi({ ...unref(form), password: 'M/IZq/iWn6mAgH1SuJuM5g==' })
+    userStore.setToken(data.token)
+    const res: any = await getUserInfoApi()
+    userStore.setUserInfo(res.data)
     push({ path: redirect.value || '/' })
   } catch (e: any) {
     console.error(e)
@@ -64,11 +62,10 @@ const commonLogin = async () => {
  * 获取验证码
  */
 const getCode = async () => {
-  const res = await getCodeApi()
-  captchaEnabled.value = res.captchaEnabled ?? true
+  const { data }: any = await getCodeApi()
   if (unref(captchaEnabled)) {
-    codeUrl.value = 'data:image/gif;base64,' + res.img
-    form.value.uuid = res.uuid
+    codeUrl.value = data.base64
+    form.value.cid = data.cid
   }
 }
 
@@ -132,13 +129,13 @@ watch(
 /**
  * 初始化登录方式
  */
-const init = async () => {
-  const { msg }: any = await getConfigKey('sys.loginType')
-  userStore.setLoginType(msg)
-  loginType.value = msg
-}
+// const init = async () => {
+//   const { msg }: any = await getConfigKey('sys.loginType')
+//   userStore.setLoginType(msg)
+//   loginType.value = msg
+// }
 
-init()
+// init()
 getCode()
 </script>
 
@@ -190,6 +187,7 @@ getCode()
   :deep(.@{elNamespace}-input-prepend) {
     padding: 0 10px;
   }
+
   .code {
     :deep(.@{elNamespace}-input__wrapper) {
       padding-right: 0;

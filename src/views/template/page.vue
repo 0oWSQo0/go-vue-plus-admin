@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { listCardDeptApi, delCardDeptApi } from '@/api/vpn/cardDept'
 import { useSearch } from '@/hooks/useSearch'
 import EditModal from './EditModal.vue'
+import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
 
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive([{ label: '部门名称', field: 'name', component: 'Input', componentProps: { maxlength: 20 } }])
+const searchSchema = reactive<FormSchema[]>([{ label: '部门名称', field: 'name', component: 'Input', componentProps: { maxlength: 20 } }])
 /**
  * 列表
  */
@@ -22,9 +22,9 @@ const queryParams = ref<any>({ pageSize: 10, pageNum: 1 })
 const getList = async () => {
   loading.value = true
   const params = await getFormData()
-  const res: any = await listCardDeptApi({ ...params, ...unref(queryParams) })
-  list.value = res.rows
-  total.value = res.total
+  // const res: any = await listCardDeptApi({ ...params, ...unref(queryParams) })
+  // list.value = res.rows
+  // total.value = res.total
   loading.value = false
 }
 const handleQuery = async () => {
@@ -58,7 +58,7 @@ const handleUpdate = (row: any) => {
  */
 const handleDelete = async (row: any) => {
   await proxy.$modal.confirm('是否确认删除数据项？')
-  await delCardDeptApi(row.id || unref(ids))
+  // await delCardDeptApi(row.id || unref(ids))
   proxy.$modal.msgSuccess('删除成功')
   getList()
 }

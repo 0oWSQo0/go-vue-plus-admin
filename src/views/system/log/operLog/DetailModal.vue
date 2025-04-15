@@ -16,9 +16,9 @@ const schema = ref<DescriptionsSchema[]>([
   { class: '!text-center', field: 'operIp', label: '操作主机' },
   { class: '!text-center', field: 'operParam', label: '请求参数', span: 24 },
   { class: '!text-center', field: 'jsonResult', label: '返回参数', span: 24 },
-  { class: '!text-center', field: 'status', label: '操作状态', slots: { default: (data) => <DictTag options={unref(sys_common_status)} value={data.status} /> } },
+  { class: '!text-center', field: 'status', label: '操作状态', slots: { default: (data) => <dict-tag options={unref(sys_common_status)} value={data.status} /> } },
   { class: '!text-center', field: 'createTime', label: '操作时间' },
-  { class: '!text-center', field: 'errorMsg', label: '异常信息', span: 24 },
+  { class: '!text-center', field: 'errorMsg', label: '异常信息', span: 24 }
 ])
 
 const reset = async () => {

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { updateUserPwdApi } from '@/api/system/user'
+import { updatePwdApi } from '@/api/org/user'
 import { Regular } from '@/utils/validate'
 import { sm3 } from 'sm-crypto'
 import { useValidator } from '@/hooks/useValidator'
@@ -56,7 +56,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    await updateUserPwdApi({ oldPassword: sm3(formData.oldPwd), newPassword: sm3(formData.newPwd)})
+    await updatePwdApi({ oldPassword: sm3(formData.oldPwd), newPassword: sm3(formData.newPwd) })
     proxy.$modal.msgSuccess('修改成功')
     open.value = false
   } finally {

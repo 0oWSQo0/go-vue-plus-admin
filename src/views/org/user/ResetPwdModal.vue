@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { resetUserPwd } from '@/api/system/user'
+import { resetPwdApi } from '@/api/org/user'
 import { Regular } from '@/utils/validate'
 import { sm3 } from 'sm-crypto'
 import { useValidator } from '@/hooks/useValidator'
@@ -32,9 +32,8 @@ const rules = ref<any>({
         const formData = await getFormData()
         if (formData.password !== value) {
           callback(new Error('两次输入的口令不一致'))
-        } else {
-          callback()
         }
+        callback()
       }
     }
   ]
@@ -54,7 +53,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    await resetUserPwd({ userId: formData.userId, password: sm3(formData.password) })
+    await resetPwdApi({ ...formData, password: sm3(formData.password) })
     proxy.$modal.msgSuccess('重置口令成功')
     open.value = false
   } finally {
@@ -66,7 +65,8 @@ const submit = async () => {
 const show = async (row: any) => {
   open.value = true
   reset()
-  await setValues(row)
+  await nextTick()
+  setValues(row)
 }
 
 defineExpose({ show })

@@ -1,25 +1,21 @@
 import request from '@/axios'
 
-export const listData = (params?: any): Promise<IResponse<any>> => {
-  return request.get({ url: '/system/dict/data/list', params })
-}
-
-export const getData = (dictCode: string): Promise<IResponse<any>> => {
-  return request.get({ url: `/system/dict/data/${dictCode}` })
+export const listDataApi = (params?: any): Promise<IResponse<any>> => {
+  return request.get({ url: '/admin/dictData/list', params })
 }
 
 export const getDicts = (dictType: string): Promise<IResponse<any>> => {
-  return request.get({ url: `/system/dict/data/type/${dictType}` })
+  return request.get({ url: `/admin/dictData/option/${dictType}` })
 }
 
-export const addData = (data: any): Promise<IResponse<any>> => {
-  return request.post({ url: '/system/dict/data', data })
+export const listValueTypeApi = (): Promise<IResponse<any>> => {
+  return request.get({ url: '/admin/config/typeSelect' })
 }
 
-export const updateData = (data: any): Promise<IResponse<any>> => {
-  return request.put({ url: '/system/dict/data', data })
+export const updateDataApi = (data: any): Promise<IResponse<any>> => {
+  return request.post({ url: '/admin/dictData/edit', data })
 }
 
-export const delData = (dictCode: string): Promise<IResponse<any>> => {
-  return request.delete({ url: `/system/dict/data/${dictCode}` })
+export const delDataApi = (data: string): Promise<IResponse<any>> => {
+  return request.post({ url: 'admin/dictData/delete', data })
 }

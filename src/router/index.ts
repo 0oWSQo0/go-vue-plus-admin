@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import type { App } from 'vue'
-import { Layout, getParentLayout } from '@/utils/routerHelper'
+import { Layout } from '@/utils/routerHelper'
 import { NO_RESET_WHITE_LIST } from '@/constants'
 
 export const constantRouterMap: AppRouteRecordRaw[] = [
@@ -34,46 +34,17 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
     ],
     meta: { hidden: true, noTagsView: true }
   },
-  // ry字典路由
   {
     path: '/system/dict-data',
+    name: 'Dict',
     component: Layout,
-    name: 'DictData',
-    meta: { hidden: true },
+    meta: { hidden: true, activeMenu: '/system/dict' },
     children: [
       {
-        path: 'index/:dictId(\\d+)',
+        path: 'index/:id(\\d+)',
+        name: 'DictData',
         component: () => import('@/views/system/dict/data.vue'),
-        name: 'Data',
-        meta: { title: '字典数据', activeMenu: '/system/dict' }
-      }
-    ]
-  },
-  {
-    path: '/loginLog',
-    component: Layout,
-    name: 'LoginLog',
-    meta: {},
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/system/log/loginLog/index.vue'),
-        name: 'LoginLogIndex',
-        meta: { title: '登录日志', icon: 'vi-ant-design:login-outlined' }
-      }
-    ]
-  },
-  {
-    path: '/operLog',
-    component: Layout,
-    name: 'operLog',
-    meta: {},
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/system/log/operLog/index.vue'),
-        name: 'operLogIndex',
-        meta: { title: '操作日志', icon: 'vi-ant-design:login-outlined' }
+        meta: { title: '字典数据', icon: 'vi-ant-design:database-outlined' }
       }
     ]
   },

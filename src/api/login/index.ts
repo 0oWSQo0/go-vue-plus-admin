@@ -1,45 +1,23 @@
 import request from '@/axios'
 import type { UserType, UserLoginType, CodeType } from './types'
 
-interface RoleParams {
-  roleName: string
-}
-
-export const getUserListApi = ({ params }: AxiosConfig) => {
-  return request.get<{
-    code: string
-    data: {
-      list: UserType[]
-      total: number
-    }
-  }>({ url: '/mock/user/list', params })
-}
-
-export const getAdminRoleApi = (params: RoleParams): Promise<IResponse<AppCustomRouteRecordRaw[]>> => {
-  return request.get({ url: '/mock/role/list', params })
-}
-
-export const getTestRoleApi = (params: RoleParams): Promise<IResponse<string[]>> => {
-  return request.get({ url: '/mock/role/list2', params })
-}
-
 export const loginApi = (data: UserLoginType): Promise<IResponse<UserType>> => {
-  return request.post({ url: '/login', data, headers: { isToken: false } })
+  return request.post({ url: '/admin/site/accountLogin', data, headers: { isToken: false } })
 }
 
 export const getCodeApi = (): Promise<IResponse & CodeType> => {
-  return request.get({ url: '/captchaImage', headers: { isToken: false } })
+  return request.get({ url: '/admin/site/captcha', headers: { isToken: false } })
 }
 
 export const getUserInfoApi = (): Promise<IResponse<any>> => {
-  return request.get({ url: '/getInfo' })
+  return request.get({ url: '/admin/member/info' })
 }
 
 export const getDynamicRouterApi = (): Promise<IResponse<any>> => {
-  return request.get({ url: '/getRouters' })
+  return request.get({ url: '/admin/role/dynamic' })
 }
 export const loginOutApi = (): Promise<IResponse<any>> => {
-  return request.post({ url: '/logout' })
+  return request.post({ url: '/admin/site/logout' })
 }
 
 export const randomStringApi = (params: any): Promise<IResponse<any>> => {

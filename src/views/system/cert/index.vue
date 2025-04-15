@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { listCertApi, delCertApi } from '@/api/system/cert'
 import { useSearch } from '@/hooks/useSearch'
+import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -10,7 +11,7 @@ const certTypeList = [
 ]
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive([
+const searchSchema = reactive<FormSchema[]>([
   { label: '证书名称', field: 'title', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '证书类型', field: 'type', component: 'Select', componentProps: { options: certTypeList } }
 ])
@@ -53,7 +54,7 @@ const handleSelectionChange = (selection: any[]) => {
  */
 const handleDelete = async (row: any) => {
   await proxy.$modal.confirm('是否确认删除数据项？')
-  await delCertApi({ids: row.id ? [row.id]: ids.value})
+  await delCertApi({ ids: row.id ? [row.id] : ids.value })
   proxy.$modal.msgSuccess('删除成功')
   getList()
 }
@@ -80,11 +81,11 @@ getList()
       <el-table-column align="center" label="证书名称" prop="title" min-width="100" />
       <el-table-column align="center" label="证书类型" prop="type" min-width="120">
         <template #default="{ row }">
-            <dict-tag :options="certTypeList" :value="[row.type]" />
+          <dict-tag :options="certTypeList" :value="[row.type]" />
         </template>
       </el-table-column>
       <el-table-column align="center" label="描述信息" prop="mark" min-width="120" />
-      <el-table-column align="center" label="有效期" prop="remark" min-width="220" :formatter="row => row.startTime + ' 至 ' + row.endTime" />
+      <el-table-column align="center" label="有效期" prop="remark" min-width="220" :formatter="(row) => row.startTime + ' 至 ' + row.endTime" />
       <el-table-column align="center" label="创建时间" prop="createTime" min-width="170" />
       <el-table-column align="center" label="操作" width="140" fixed="right">
         <template #default="{ row }">

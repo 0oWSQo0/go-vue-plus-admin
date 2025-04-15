@@ -31,7 +31,7 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
     return response
   } else if (response.data.code === SUCCESS_CODE) {
     return response.data
-  } else if (response?.data?.code === 401) {
+  } else if (response?.data?.code === 61) {
     ElMessage.error('登录已过期，请重新登录')
     const userStore = useUserStoreWithOut()
     userStore.logout()

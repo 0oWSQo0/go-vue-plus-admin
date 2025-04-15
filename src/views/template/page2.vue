@@ -3,9 +3,10 @@ import { listLoginLogApi } from '@/api/system/loginLog'
 import { useSearch } from '@/hooks/useSearch'
 import type { TableColumn } from '@/components/Table'
 import { useTable } from '@/hooks/useTable'
+import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
-const { sys_common_status } = proxy.useDict(['sys_common_status'])
+const { sys_common_status } = proxy.useDict('sys_common_status')
 
 /**
  * 搜索
@@ -13,7 +14,7 @@ const { sys_common_status } = proxy.useDict(['sys_common_status'])
 const showSearch = ref(true)
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive([
+const searchSchema = reactive<FormSchema[]>([
   { label: '登录地址', field: 'ipaddr', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '用户账号', field: 'userName', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '登录状态', field: 'status', component: 'Select', componentProps: { options: sys_common_status } },
@@ -34,7 +35,7 @@ const resetQuery = () => {
 const { tableRegister, tableMethods, tableState } = useTable({
   fetchDataApi: async () => {
     const params = await getFormData()
-    const obj = { ...params, ...proxy.addDateRange({ pageNum: unref(currentPage), pageSize: unref(pageSize) }, params.dateRange), dateRange: undefined }
+    const obj = { ...params, ...{ page: unref(currentPage), pageSize: unref(pageSize) } }
     const res: any = await listLoginLogApi(obj)
     return { list: res.rows, total: res.total }
   }
@@ -52,7 +53,7 @@ const columns: TableColumn[] = [
     label: '登录状态',
     slots: {
       default: ({ row }) => {
-        return <DictTag options={unref(sys_common_status)} value={row.status} />
+        return <dict-tag options={unref(sys_common_status)} value={row.status} />
       }
     }
   },
@@ -65,7 +66,8 @@ const columns: TableColumn[] = [
  * @param row
  */
 const handleDownload = async () => {
-  proxy.$download.downloadGet('monitor/logininfor/export', { ...queryParams.value }, `config_${new Date().getTime()}.xlsx`)
+  const params = await getFormData()
+  proxy.$download.downloadGet({ url: 'monitor/logininfor/export', params })
 }
 </script>
 

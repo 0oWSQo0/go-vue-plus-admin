@@ -102,10 +102,10 @@ export default defineComponent({
                   return (
                     <ElCol key={item.field} span={item.span || 24 / props.column} class="flex items-stretch">
                       {props.direction === 'horizontal' ? (
-                        <div class="flex items-stretch bg-[var(--el-fill-color-light)] outline-1px outline-[var(--el-border-color-lighter)] outline-solid flex-1">
+                        <div class="flex h-full items-stretch bg-[var(--el-fill-color-light)] outline-1px outline-[var(--el-border-color-lighter)] outline-solid flex-1">
                           <div
                             {...getBindItemValue(item)}
-                            class="w-120px h-46px leading-24px text-left px-8px py-11px font-700 color-[var(--el-text-color-regular)] border-r-1px border-r-[var(--el-border-color-lighter)] border-r-solid "
+                            class="w-120px h-full leading-24px text-left px-8px py-11px font-700 color-[var(--el-text-color-regular)] border-r-1px border-r-[var(--el-border-color-lighter)] border-r-solid "
                           >
                             {item.label}
                           </div>

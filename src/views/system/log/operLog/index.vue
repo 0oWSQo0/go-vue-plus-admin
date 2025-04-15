@@ -4,6 +4,7 @@ import { useSearch } from '@/hooks/useSearch'
 import type { TableColumn } from '@/components/Table'
 import { useTable } from '@/hooks/useTable'
 import DetailModal from './DetailModal.vue'
+import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
 const { sys_common_status, sys_oper_type } = proxy.useDict('sys_common_status', 'sys_oper_type')
@@ -14,7 +15,7 @@ const { sys_common_status, sys_oper_type } = proxy.useDict('sys_common_status', 
 const showSearch = ref(true)
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive([
+const searchSchema = reactive<FormSchema[]>([
   { label: '系统模块', field: 'moduleName', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '操作人员', field: 'userName', component: 'Input', componentProps: { maxlength: 20 } },
   { label: '操作类型', field: 'operType', component: 'Select', componentProps: { options: sys_oper_type } },
@@ -45,14 +46,14 @@ const { loading, dataList, total, currentPage, pageSize } = tableState
 const { getList } = tableMethods
 const columns: TableColumn[] = [
   { field: 'moduleName', label: '系统模块' },
-  { field: 'operType', label: '操作类型', slots: { default: ({ row }) => <DictTag options={unref(sys_oper_type)} value={row.operType} /> } },
+  { field: 'operType', label: '操作类型', slots: { default: ({ row }) => <dict-tag options={unref(sys_oper_type)} value={row.operType} /> } },
   { field: 'userName', label: '操作人员' },
   { field: 'operIp', label: '操作主机' },
   {
     field: 'status',
     label: '操作状态',
     slots: {
-      default: ({ row }) => <DictTag options={unref(sys_common_status)} value={row.status} />
+      default: ({ row }) => <dict-tag options={unref(sys_common_status)} value={row.status} />
     }
   },
   { field: 'createTime', label: '操作日期', width: 180 },
@@ -78,7 +79,8 @@ const handleDetail = (row: any) => {
  * @param row
  */
 const handleDownload = async () => {
-  proxy.$download.downloadGet('monitor/logininfor/export', { ...queryParams.value }, `config_${new Date().getTime()}.xlsx`)
+  const params = await getFormData()
+  proxy.$download.downloadGet({ url: 'monitor/logininfor/export', params })
 }
 </script>
 

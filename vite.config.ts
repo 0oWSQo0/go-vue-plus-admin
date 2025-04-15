@@ -43,7 +43,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         // 选项写法
         '/dev-api': {
-          target: 'http://localhost:4000/mock',
+          target: 'https://hotgo.facms.cn',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dev-api/, '')
         }
@@ -62,13 +62,13 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       }),
       AutoImport({
         imports: ['vue', 'vue-router'],
-        resolvers: [ElementPlusResolver({ importStyle: 'css', directives: true }), IconsResolver({ prefix: 'Icon'})],
+        resolvers: [ElementPlusResolver({ importStyle: 'css', directives: true }), IconsResolver({ prefix: 'Icon' })],
         eslintrc: { enabled: true, globalsPropValue: true }
       }),
       Components({
-        resolvers: [ElementPlusResolver({ importStyle: 'css', directives: true }), IconsResolver({ enabledCollections: ['ep']})]
+        resolvers: [ElementPlusResolver({ importStyle: 'css', directives: true }), IconsResolver({ enabledCollections: ['ep'] })]
       }),
-      Icons({ autoInstall: true}),
+      Icons({ autoInstall: true }),
       ElementPlus({}),
       VueJsx(),
       ServerUrlCopy(),

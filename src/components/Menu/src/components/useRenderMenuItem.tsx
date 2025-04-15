@@ -11,7 +11,7 @@ const prefixCls = getPrefixCls('submenu')
 
 const { renderMenuTitle } = useRenderMenuTitle()
 
-export const useRenderMenuItem = (menuMode) =>
+export const useRenderMenuItem = (menuMode: any) =>
   // allRouters: AppRouteRecordRaw[] = [],
   {
     const renderMenuItem = (routers: AppRouteRecordRaw[], parentPath = '/') => {
@@ -21,8 +21,10 @@ export const useRenderMenuItem = (menuMode) =>
           const meta = v.meta ?? {}
           const { oneShowingChild, onlyOneChild } = hasOneShowingChild(v.children, v)
           const fullPath = isUrl(v.path) ? v.path : pathResolve(parentPath, v.path) // getAllParentPath<AppRouteRecordRaw>(allRouters, v.path).join('/')
-
-          if (oneShowingChild && (!onlyOneChild?.children || onlyOneChild?.noShowingChildren) && !meta?.alwaysShow) {
+          /**
+           * 改过，不确定
+           */
+          if (oneShowingChild && (!onlyOneChild?.children || onlyOneChild?.noShowingChildren || !meta?.alwaysShow)) {
             return (
               <ElMenuItem index={onlyOneChild ? pathResolve(fullPath, onlyOneChild.path) : fullPath}>
                 {{

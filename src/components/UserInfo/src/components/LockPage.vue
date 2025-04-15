@@ -95,7 +95,7 @@ function handleShowForm(show = false) {
       <div :class="`${prefixCls}-entry`" v-show="!showDate">
         <div :class="`${prefixCls}-entry-content`">
           <div class="flex flex-col items-center">
-            <img src="@/assets/imgs/avatar.jpg" alt="" class="w-70px h-70px rounded-[50%]" />
+            <img src="@/assets/imgs/logo.png" alt="" class="w-70px h-70px rounded-[50%]" />
             <span class="text-14px my-10px text-[var(--logo-title-text-color)]">Archer</span>
           </div>
           <ElInput type="password" placeholder="请输入锁屏密码" class="enter-x" v-model="password" @keydown.enter="unLock" ref="passwordInputRef" />

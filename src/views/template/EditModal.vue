@@ -18,20 +18,11 @@ const rules = ref<any>({
   roleIds: [required()],
   nickName: [required(), lengthRange({ min: 2, max: 20 })],
   password: [required(), lengthRange({ min: 8, max: 20 }), { pattern: Regular.checkPin(), message: '口令应包含字母、数字、特殊字符' }],
-  checkPassword: [
-    required(),
-    lengthRange({ min: 8, max: 20 }),
-    { pattern: Regular.checkPin(), message: '确认口令应包含字母、数字、特殊字符' },
-  ]
+  checkPassword: [required(), lengthRange({ min: 8, max: 20 }), { pattern: Regular.checkPin(), message: '确认口令应包含字母、数字、特殊字符' }]
 })
 const schema = ref<FormSchema[]>([
-  { field: 'name', label: '资源名称', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'type', label: '资源类型', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'address', label: '资源地址', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'ip', label: '资源IP', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'mask', label: '资源掩码', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'serviceType', label: '服务类型', component: 'Input', componentProps: { maxlength: 20 }  },
-  { field: 'port', label: '资源端口', component: 'Input', componentProps: { maxlength: 20 }  }
+  { field: 'name', label: '资源名称', component: 'Input', componentProps: { maxlength: 20 } },
+  { field: 'type', label: '资源类型', component: 'Input', componentProps: { maxlength: 20 } }
 ])
 
 const reset = async () => {
@@ -60,7 +51,8 @@ const show = async (row: any) => {
   open.value = true
   reset()
   if (row) {
-    await setValues(row)
+    await nextTick()
+    setValues(row)
   }
 }
 defineExpose({ show })

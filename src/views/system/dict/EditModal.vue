@@ -2,7 +2,7 @@
 import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import { FormSchema } from '@/components/Form'
-import { addType, updateType } from '@/api/system/dict/type'
+import { updateTypeApi } from '@/api/system/dict/type'
 
 const { proxy } = getCurrentInstance() as any
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
@@ -36,7 +36,7 @@ const submit = async () => {
   try {
     loading.value = true
     const formData = await getFormData()
-    formData.dictId ? await updateType(formData) : await addType(formData)
+    await updateTypeApi(formData)
     proxy.$modal.msgSuccess(`${unref(title)}成功`)
     open.value = false
     emits('submit')

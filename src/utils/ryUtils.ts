@@ -24,8 +24,8 @@ export function useDict(...args: any[]) {
       } else {
         getDicts(dictType).then((resp: any) => {
           res.value[dictType] = resp.data.map((p: any) => ({
-            label: p.dictLabel,
-            value: p.dictValue,
+            label: p.label,
+            value: p.value,
             elTagType: p.listClass,
             elTagClass: p.cssClass
           }))
@@ -57,7 +57,7 @@ export function selectDictLabel(datas: any, value: any) {
   }
   const actions: any[] = []
   Object.keys(datas).some((key) => {
-    if (datas[key].value === '' + value) {
+    if (datas[key].value === value) {
       actions.push(datas[key].label)
       return true
     }

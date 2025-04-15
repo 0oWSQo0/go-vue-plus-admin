@@ -48,12 +48,13 @@ const submit = async () => {
   }
 }
 
-const show = async (row: any) => {
+const show = async (row?: any) => {
   title.value = row ? '修改' : '新增'
   open.value = true
   reset()
   if (row) {
-    await setValues(row)
+    await nextTick()
+    setValues(row)
   }
 }
 defineExpose({ show })

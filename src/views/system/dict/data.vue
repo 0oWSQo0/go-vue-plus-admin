@@ -6,128 +6,120 @@
 
     <div class="mb-2 flex justify-between">
       <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-      <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
-      <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
+    <Table :columns="columns" :data="dataList" :loading="loading" @register="tableRegister" />
 
-    <el-table border show-overflow-tooltip v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
-      <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" label="字典标签" prop="dictLabel">
-        <template #default="{ row }">
-          <el-tag :type="row.listClass">{{ row.dictLabel }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="字典键值" prop="dictValue" />
-      <el-table-column align="center" label="字典排序" prop="dictSort" />
-      <el-table-column align="center" label="字典状态" prop="status">
-        <template #default="{ row }">
-          <dict-tag :options="sys_normal_disable" :value="row.status" />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="备注信息" prop="remark" />
-      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" label="操作" :min-width="140">
-        <template #default="{ row }">
-          <el-button link type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     <DataEditModal ref="editRef" @submit="getList" />
   </content-wrap>
 </template>
 
-<script setup name="Data" lang="ts">
+<script setup name="Data" lang="tsx">
 import { useDictStore } from '@/store/modules/dict'
-import { getDictOptionselect, getType } from '@/api/system/dict/type'
-import { listData, getData, delData } from '@/api/system/dict/data'
+import { listDataApi, delDataApi } from '@/api/system/dict/data'
 import { useSearch } from '@/hooks/useSearch'
 import DataEditModal from './DataEditModal.vue'
 import { useTagsView } from '@/hooks/useTagsView'
+import type { TableColumn } from '@/components/Table'
+import { useTable } from '@/hooks/useTable'
+import { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 const route = useRoute()
 
-const typeOptions = ref<any[]>([])
-const defaultDictType = ref('')
+const showSearch = ref(true)
 const { searchRegister, searchMethods } = useSearch()
-const { getFormData, setValues } = searchMethods
-const searchSchema = reactive([
-  { label: '字典名称', field: 'dictType', component: 'Select', componentProps: { options: typeOptions, props: { label: 'dictName', key: 'dictId', value: 'dictType' } } },
-  { label: '字典标签', field: 'dictLabel', component: 'Input', componentProps: { maxlength: 20 } },
-  { label: '字典状态', field: 'status', component: 'Select', componentProps: { options: sys_normal_disable } }
+const { getFormData } = searchMethods
+const searchSchema = reactive<FormSchema[]>([
+  { label: '字典标签', field: 'label', component: 'Input', componentProps: { maxlength: 20 } },
+  { label: '字典键值', field: 'value', component: 'Input', componentProps: { maxlength: 20 } }
 ])
-
+const handleQuery = async () => {
+  currentPage.value = 1
+  getList()
+}
+const resetQuery = () => {
+  currentPage.value = 1
+  pageSize.value = 10
+  getList()
+}
 /**
  * 列表
  */
-const list = ref<any[]>([])
-const loading = ref(true)
-const showSearch = ref(true)
-const ids = ref<number[]>([])
-const single = ref(true)
-const multiple = ref(true)
-const total = ref(0)
-const queryParams = ref<any>({})
-const getTypes = async (dictId: any) => {
-  const res: any = await getType(dictId)
-  defaultDictType.value = res.data.dictType
-  await setValues({ dictType: res.data.dictType })
-  getList()
-}
-/** 查询字典类型列表 */
-const getTypeList = async () => {
-  const res = await getDictOptionselect()
-  typeOptions.value = res.data
-}
-/** 查询字典数据列表 */
-const getList = async () => {
-  loading.value = true
-  const params = await getFormData()
-  const res: any = await listData({ ...params, ...unref(queryParams) })
-  list.value = res.rows
-  total.value = res.total
-  loading.value = false
-}
-const handleQuery = async () => {
-  queryParams.value.pageNum = 1
-  getList()
-}
-const resetQuery = async () => {
-  await setValues({ dictType: unref(defaultDictType) })
-  queryParams.value = { pageSize: 10, pageNum: 1 }
-  getList()
-}
-/** 多选框选中数据 */
-const handleSelectionChange = (selection: any[]) => {
-  ids.value = selection.map((item) => item.dictCode)
-  single.value = selection.length !== 1
-  multiple.value = !selection.length
-}
+const { tableRegister, tableMethods, tableState } = useTable({
+  fetchDataApi: async () => {
+    const params = await getFormData()
+    const obj = { ...params, ...{ page: unref(currentPage), pageSize: unref(pageSize), typeId: route.params.id } }
+    const { data }: any = await listDataApi(obj)
+    return { list: data.list, total: data.totalCount }
+  }
+})
+const { loading, dataList, currentPage, pageSize } = tableState
+const { getList } = tableMethods
+const columns: TableColumn[] = [
+  { field: 'type', label: '字典类型', minWidth: 180 },
+  {
+    field: 'label',
+    label: '字典标签',
+    slots: {
+      default: ({ row }) => {
+        return <el-tag type={row.listClass}>{row.label}</el-tag>
+      }
+    }
+  },
+  { field: 'value', label: '字典键值' },
+  { field: 'valueType', label: '键值类型' },
+  {
+    field: 'status',
+    label: '字典状态',
+    slots: {
+      default: ({ row }) => {
+        return <dict-tag options={unref(sys_normal_disable)} value={[row.status]} />
+      }
+    }
+  },
+  { field: 'sort', label: '排序' },
+  { field: 'remark', label: '备注' },
+  {
+    field: 'action',
+    label: '操作',
+    width: 140,
+    slots: {
+      default: ({ row }) => {
+        return (
+          <>
+            <el-button link type="primary" icon="Edit" onClick={() => handleUpdate(row)}>
+              修改
+            </el-button>
+            <el-button link type="primary" icon="Delete" onClick={() => handleDelete(row)}>
+              删除
+            </el-button>
+          </>
+        )
+      }
+    }
+  }
+]
 
 /**
  * 新增修改
  */
 const editRef = ref()
 const handleAdd = () => {
-  editRef.value.show(unref(defaultDictType))
+  editRef.value.show({ typeId: +route.params.id })
 }
 const handleUpdate = async (row: any) => {
-  const res: any = await getData(row.dictCode || ids.value)
-  editRef.value.show(unref(defaultDictType), res.data)
+  editRef.value.show(unref(row))
 }
 
 /** 删除按钮操作 */
 const handleDelete = async (row: any) => {
   await proxy.$modal.confirm('是否确认删除字典数据项？')
-  await delData(row.dictCode || ids.value)
+  await delDataApi(row.typeId)
   getList()
   proxy.$modal.msgSuccess('删除成功')
-  useDictStore().removeDict(unref(defaultDictType))
+  useDictStore().removeDict(row.typeId)
 }
 
 /** 返回按钮操作 */
@@ -138,6 +130,5 @@ const handleClose = () => {
     push({ path: '/system/dict' })
   })
 }
-getTypes(route.params?.dictId)
-getTypeList()
+getList()
 </script>

@@ -43,13 +43,23 @@ export const generateRoutesByServer = (routes: AppCustomRouteRecordRaw[]): AppRo
       meta: route.meta
     }
     if (route.component) {
-      const comModule = modules[`../views/${route.component}.vue`] || modules[`../views/${route.component}.tsx`]
+      const comModule = modules[`../views${route.component}.vue`] || modules[`../views${route.component}.tsx`]
       const component = route.component as string
-      if (!comModule && !['Layout', 'ParentView', 'InnerLink'].includes(component)) {
+      if (!comModule && !['LAYOUT', 'ParentLayout', 'IFRAME'].includes(component)) {
         console.error(`未找到${route.component}.vue文件或${route.component}.tsx文件，请创建`)
       } else {
         // 动态加载路由文件，可根据实际情况进行自定义逻辑
-        data.component = component === 'Layout' ? Layout : component.includes('ParentView') ? getParentLayout() : comModule
+        if (component === 'LAYOUT') {
+          data.component = Layout
+        } else if (component === 'ParentLayout') {
+          data.component = getParentLayout()
+        } else if (component === 'IFRAME') {
+          data.path = data?.meta?.frameSrc as string
+          data.component = getParentLayout()
+        } else {
+          data.component = comModule
+        }
+        // data.component = component === 'LAYOUT' ? Layout : component.includes('ParentLayout') ? getParentLayout() : comModule
       }
     }
     // recursive child routes
@@ -80,6 +90,23 @@ export const handleRyRouters = (routes: AppCustomRouteRecordRaw[]): AppCustomRou
       }
       res.push(data)
       continue
+    }
+
+    res.push(route)
+  }
+  return res
+}
+/**
+ * 处理GO系统路由
+ * @param routes
+ * @returns
+ */
+export const handleGoRouters = (routes: AppCustomRouteRecordRaw[]): AppCustomRouteRecordRaw[] => {
+  const res: AppCustomRouteRecordRaw[] = []
+  const cloneRoutes = cloneDeep(routes)
+  for (const route of cloneRoutes) {
+    if (!route.path.startsWith('/')) {
+      route.path = '/' + route.path
     }
 
     res.push(route)

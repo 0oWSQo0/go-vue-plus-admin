@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { asyncRouterMap, constantRouterMap } from '@/router'
-import { generateRoutesByServer, flatMultiLevelRoutes, handleRyRouters } from '@/utils/routerHelper'
+import { generateRoutesByServer, flatMultiLevelRoutes, handleGoRouters } from '@/utils/routerHelper'
 import { store } from '../index'
 import { cloneDeep } from 'lodash-es'
 import { useAppStore } from './app'
@@ -41,7 +41,7 @@ export const usePermissionStore = defineStore('permission', {
       const appStore = useAppStore()
       if (appStore.getDynamicRouter) {
         const res = await getDynamicRouterApi()
-        const routers = res?.data || []
+        const routers = res?.data?.list || []
         await this.generateRoutes('server', routers).catch(() => {})
       } else {
         await this.generateRoutes('static').catch(() => {})
@@ -56,7 +56,7 @@ export const usePermissionStore = defineStore('permission', {
         let routerMap: AppRouteRecordRaw[] = []
         if (type === 'server') {
           // 模拟后端过滤菜单
-          const transRoutes = handleRyRouters(routers as AppCustomRouteRecordRaw[])
+          const transRoutes = handleGoRouters(routers as AppCustomRouteRecordRaw[])
           routerMap = generateRoutesByServer(transRoutes as AppCustomRouteRecordRaw[])
         } else {
           // 直接读取静态路由表

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { resetPwdApi } from '@/api/org/user'
+import { updateUserApi } from '@/api/system/user'
 import { Regular } from '@/utils/validate'
 import { sm3 } from 'sm-crypto'
 import { useValidator } from '@/hooks/useValidator'
@@ -17,6 +17,7 @@ import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
 
 const { proxy } = getCurrentInstance() as any
+const emits = defineEmits(['submit'])
 const { required, lengthRange } = useValidator()
 const { formRegister, formMethods } = useForm()
 const { setValues, getElFormExpose, getFormData } = formMethods
@@ -53,8 +54,9 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    await resetPwdApi({ ...formData, password: sm3(formData.password) })
+    await updateUserApi({ ...formData, passwordHash: sm3(formData.password) })
     proxy.$modal.msgSuccess('重置口令成功')
+    emits('submit')
     open.value = false
   } finally {
     loading.value = false
@@ -65,8 +67,7 @@ const submit = async () => {
 const show = async (row: any) => {
   open.value = true
   reset()
-  await nextTick()
-  setValues(row)
+  await setValues(row)
 }
 
 defineExpose({ show })

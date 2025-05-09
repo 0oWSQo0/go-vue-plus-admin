@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { updatePwdApi } from '@/api/org/user'
+import { updateUserApi } from '@/api/system/user'
 import { Regular } from '@/utils/validate'
 import { sm3 } from 'sm-crypto'
 import { useValidator } from '@/hooks/useValidator'
@@ -33,9 +33,8 @@ const rules = ref<any>({
         const formData = await getFormData()
         if (formData.newPwd !== value) {
           callback(new Error('两次输入的口令不一致'))
-        } else {
-          callback()
         }
+        callback()
       }
     }
   ]
@@ -56,7 +55,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    await updatePwdApi({ oldPassword: sm3(formData.oldPwd), newPassword: sm3(formData.newPwd) })
+    await updateUserApi({ ...formData, passwordHash: sm3(formData.newPwd) })
     proxy.$modal.msgSuccess('修改成功')
     open.value = false
   } finally {

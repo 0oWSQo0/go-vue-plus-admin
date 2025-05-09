@@ -79,9 +79,9 @@ const submit = async () => {
     const happlication = await openApp({ hdevice, appName: 'user' })
     await changePin({ newPin: formData.newPin, oldPin: formData.oldPin, happlication })
     proxy.$modal.msgSuccess('PIN 码修改成功')
-    open.value = false
     userStore.setUkeyInfo({ pin: formData.newPin, keyCode: serialnumber })
     handleSubmit()
+    open.value = false
   } finally {
     loading.value = false
   }

@@ -20,7 +20,7 @@ const { currentRoute, push } = useRouter()
 const { required } = useValidator()
 const userStore = useUserStore()
 
-const loginType = ref<LoginTypeEnum>(LoginTypeEnum.Default)
+const loginType = ref<LoginTypeEnum>(LoginTypeEnum.DEFAULT)
 const formRef = ref<any>()
 const form = ref<any>({})
 const rules = {
@@ -36,7 +36,7 @@ const captchaEnabled = ref(true)
 
 const handleLogin = async () => {
   await formRef.value?.validate()
-  unref(loginType) === LoginTypeEnum.Default ? commonLogin() : ukeyLogin()
+  unref(loginType) === LoginTypeEnum.DEFAULT ? commonLogin() : ukeyLogin()
 }
 
 /**
@@ -94,7 +94,7 @@ const ukeyLogin = async () => {
     }
     const buffer = new Uint8Array([...arr1, ...arr2])
     const randomAB = Base64.fromUint8Array(buffer)
-    const plaindata = await bsm3({ hdevice, happlication, indata: randomAB, withPublicKey: true, id: '1234567812345678' })
+    const plaindata = await bsm3({ hdevice, hcontainer, indata: randomAB, withPublicKey: true, id: '1234567812345678' })
     const signData = await sm2Sign({ hcontainer, plaindata })
     const obj = {
       ...unref(form),

@@ -6,7 +6,6 @@ import tseslint from 'typescript-eslint'
 // vue文件解析器
 import vueParser from 'vue-eslint-parser'
 import prettier from 'eslint-plugin-prettier'
-// import autoImportConfig from './.eslintrc-auto-import.json' assert { type: 'json' }
 
 export default tseslint.config({
   // ignores: ['node_modules', 'prettier.config.cjs', 'dist*'],
@@ -21,9 +20,6 @@ export default tseslint.config({
     prettier
   },
   languageOptions: {
-    // globals: {
-    //   ...autoImportConfig.globals
-    // },
     parser: vueParser, // 使用vue解析器，这个可以识别vue文件
     parserOptions: {
       parser: tseslint.parser, // 在vue文件上使用ts解析器

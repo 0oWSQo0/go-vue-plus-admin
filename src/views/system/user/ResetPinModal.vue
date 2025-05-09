@@ -16,6 +16,7 @@ import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
 import type { FormRules } from 'element-plus'
+import { LoginTypeEnum } from '@/views/Login/types'
 
 const { required, lengthRange } = useValidator()
 const { formRegister, formMethods } = useForm()
@@ -56,7 +57,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    const hdevice = await openDevice({ index: loginType === 'ukey' ? 1 : 0 })
+    const hdevice = await openDevice({ index: loginType === LoginTypeEnum.DEFAULT ? 0 : 1 })
     const { serialnumber } = await getKeyInfo({ hdevice })
     if (serialnumber !== formData.keyCode) {
       proxy.$modal.msgError('非当前用户UKEY')
@@ -64,6 +65,7 @@ const submit = async () => {
     }
     const happlication = await openApp({ hdevice, appName: 'user' })
     await resetPin({ happlication, newPin: formData.pin })
+    loginType === LoginTypeEnum.UKEY && userStore.setUkeyInfo({ pin: formData.pin, keyCode: formData.keyCode })
     proxy.$modal.msgSuccess('PIN 码重置成功')
     open.value = false
   } finally {
@@ -75,7 +77,7 @@ const submit = async () => {
 const show = async (row: any) => {
   open.value = true
   reset()
-  await setValues({ keyCode: row.keyCode })
+  await setValues(row)
 }
 
 defineExpose({ show })

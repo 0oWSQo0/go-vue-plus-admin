@@ -1,5 +1,5 @@
 <script setup name="User" lang="tsx">
-import { changeStatusApi, listUserApi, delUserApi, unbindKeyApi } from '@/api/org/user'
+import { changeStatusApi, listUserApi, delUserApi, unbindKeyApi } from '@/api/system/user'
 import EditModal from './EditModal.vue'
 import BindKeyModal from './BindKeyModal.vue'
 import ResetPinModal from './ResetPinModal.vue'
@@ -35,9 +35,8 @@ const handleQuery = async () => {
   getList()
 }
 const resetQuery = () => {
-  currentPage.value = 1
   pageSize.value = 10
-  getList()
+  handleQuery()
 }
 
 /**
@@ -49,7 +48,7 @@ const multiple = ref(true)
 const { tableRegister, tableMethods, tableState } = useTable({
   fetchDataApi: async () => {
     const params = await getFormData()
-    const res: any = await listUserApi({ ...params, ...{ page: unref(currentPage), pageSize: unref(pageSize), roleId: -1 } })
+    const res: any = await listUserApi({ ...params, page: unref(currentPage), pageSize: unref(pageSize), roleId: -1 })
     return { list: res.data.list, total: res.data.totalCount }
   }
 })
@@ -83,7 +82,7 @@ const columns: TableColumn[] = [
               <i-carbon-usb />
               {row.keyCode ? '解绑UKEY' : '绑定UKEY'}
             </el-button>
-            {loginType === LoginTypeEnum.Default ? (
+            {loginType === LoginTypeEnum.DEFAULT ? (
               <el-button link type="primary" icon="Key" onClick={() => handleResetPwd(row)}>
                 重置口令
               </el-button>
@@ -118,7 +117,7 @@ const handleAdd = () => {
   editRef.value.show()
 }
 const handleUpdate = (row: any) => {
-  editRef.value.show(unref(row))
+  editRef.value.show({ ...row })
 }
 
 /**
@@ -157,11 +156,11 @@ const handleChangeStatus: any = async (row: any) => {
  */
 const resetPwdRef = ref()
 async function handleResetPwd(row: any) {
-  resetPwdRef.value.show(unref(row))
+  resetPwdRef.value.show({ ...row })
 }
 const resetPinRef = ref()
 async function handleResetPin(row: any) {
-  resetPinRef.value.show(unref(row))
+  resetPinRef.value.show({ ...row })
 }
 
 /**
@@ -175,7 +174,7 @@ const handleBindKey = async (row: any) => {
     proxy.$modal.msgSuccess('解绑成功')
     getList()
   } else {
-    bindRef.value.show(unref(row))
+    bindRef.value.show({ ...row })
   }
 }
 getList()
@@ -203,7 +202,7 @@ getList()
 
     <EditModal ref="editRef" @submit="getList" />
     <ResetPinModal ref="resetPinRef" />
-    <ResetPwdModal ref="resetPwdRef" />
+    <ResetPwdModal ref="resetPwdRef" @submit="getList" />
     <BindKeyModal ref="bindRef" @submit="getList" />
   </ContentWrap>
 </template>

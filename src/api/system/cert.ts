@@ -1,9 +1,13 @@
 import request from '@/axios'
 
-export const listCertApi = (params?: any): Promise<IResponse<any>> => {
-  return request.get({ url: '/secure/cert/list', params })
+export const addCaCertApi = (data: any): Promise<IResponse<any>> => {
+  return request.post({ url: '/admin/caCert', data })
 }
 
-export const delCertApi = (data: any): Promise<IResponse<any>> => {
-  return request.post({ url: `/secure/cert/del`, data })
+export const listCertApi = (params?: any): Promise<IResponse<any>> => {
+  return request.get({ url: '/admin/cert/List', params })
+}
+
+export const delCertApi = (id: number): Promise<IResponse<any>> => {
+  return request.delete({ url: `/admin/cert/${id}` })
 }

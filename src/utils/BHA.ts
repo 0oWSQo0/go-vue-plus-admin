@@ -1,5 +1,6 @@
 import { ElMessageBox } from 'element-plus'
 import { SM4EcbCrypter } from './SM4'
+import { Base64 } from 'js-base64'
 
 /**
  * 参数处理
@@ -142,7 +143,7 @@ export const createApp = async ({ hdevice, appName, userPin }) => {
       return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: '删除应用失败' })
     }
   } else {
-    // 设备认证(删除操作时需要先对设备进行认证才可继续操作)
+    // 设备认证
     await authApp({ hdevice })
   }
   const createRes = await service({ order: SKFInterface.CreateApp, hdevice, appName, adminPin: 11111111, adminRetry: 5, userPin, userRetry: 5, createFileRights: 0x00000010 })
@@ -376,26 +377,23 @@ export const sm2Encrypt = async ({ hdevice, eccpublickeyblob, plaindata }) => {
   return Promise.resolve(eccsignatureblob)
 }
 
-export const sm3 = async ({
-  hdevice,
-  happlication,
-  indata,
-  withPublicKey = false,
-  id = null
-}: {
-  hdevice: string
-  happlication: string
-  indata: string
-  withPublicKey?: boolean
-  id?: string | null
-}) => {
-  let eccpublickeyblob = null
+export const sm3 = async ({ hdevice, hcontainer, indata, withPublicKey = false, id = 'null' }: { hdevice: string; hcontainer: string; indata: string; withPublicKey?: boolean; id?: string }) => {
+  let eccpublickeyblob = 'null'
   if (withPublicKey) {
-    const res = await service({ order: SKFInterface.ExportPublicKey, happlication })
+    const res = await service({ order: SKFInterface.ExportPublicKey, hcontainer, signflag: 1 })
     eccpublickeyblob = res.publickeyblob
+    const arr: any[] = []
+    for (const ch of Base64.atob(eccpublickeyblob)) {
+      arr.push(ch.codePointAt(0))
+    }
   }
   const { hhash } = await service({ order: SKFInterface.SM3Hash, hdevice, algid: 1, eccpublickeyblob, id })
   const { digest } = await service({ order: SKFInterface.SM3Digest, hhash, indata })
+  const arr: any = []
+  for (const ch of Base64.atob(digest)) {
+    arr.push(ch.codePointAt(0))
+  }
+  console.log('sm3', arr)
   return Promise.resolve(digest)
 }
 /**

@@ -11,10 +11,11 @@
 <script setup lang="ts">
 import { Regular } from '@/utils/validate'
 import { listRoleApi } from '@/api/permission/role'
-import { updateUserApi } from '@/api/org/user'
+import { updateUserApi } from '@/api/system/user'
 import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
+import { sm3 } from 'sm-crypto'
 
 const { proxy } = getCurrentInstance() as any
 const emits = defineEmits(['submit'])
@@ -77,7 +78,7 @@ const submit = async () => {
   try {
     loading.value = true
     const formData = await getFormData()
-    updateUserApi(formData)
+    updateUserApi({ ...formData, passwordHash: formData.password ? sm3(formData.password) : undefined })
     proxy.$modal.msgSuccess(`${unref(title)}成功`)
     open.value = false
     emits('submit')
@@ -90,12 +91,9 @@ const show = async (row?: any) => {
   title.value = row ? '修改' : '新增'
   open.value = true
   reset()
-
   if (row) {
-    await nextTick()
-    setValues(row)
+    await setValues(row)
     const formData = await getFormData()
-    console.log(formData)
     rules.value.password[0].required = false
     rules.value.checkPassword[0].required = false
   } else {

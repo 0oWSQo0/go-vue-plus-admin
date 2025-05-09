@@ -11,6 +11,8 @@ import { useUserStore } from '@/store/modules/user'
 import { LoginTypeEnum } from '@/views/Login/types'
 import { loginOutApi } from '@/api/login'
 import { ElMessageBox } from 'element-plus'
+
+//----------------
 const userStore = useUserStore()
 let timer: any = null
 let logoutTime = 10
@@ -54,7 +56,7 @@ const checkKeyStatus = async () => {
   }, 2000)
 }
 
-userStore.getLoginType === LoginTypeEnum.Ukey && checkKeyStatus()
+userStore.getLoginType === LoginTypeEnum.UKEY && checkKeyStatus()
 //------------
 
 const { getPrefixCls } = useDesign()

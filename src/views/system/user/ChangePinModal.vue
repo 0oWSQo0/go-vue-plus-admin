@@ -15,6 +15,7 @@ import { useUserStoreWithOut } from '@/store/modules/user'
 import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
+import { LoginTypeEnum } from '@/views/Login/types'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -58,7 +59,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    const { hdevice } = await openDevice({ index: loginType === 'ukey' ? 1 : 0 })
+    const { hdevice } = await openDevice({ index: loginType === LoginTypeEnum.DEFAULT ? 0 : 1 })
     const { serialnumber } = await getKeyInfo({ hdevice })
     if (serialnumber !== formData.keyCode) {
       proxy.$modal.msgError('非当前用户UKEY')
@@ -66,6 +67,7 @@ const submit = async () => {
     }
     const happlication = await openApp({ hdevice, appName: 'user' })
     await changePin({ newPin: formData.newPin, oldPin: formData.oldPin, happlication })
+    loginType === LoginTypeEnum.UKEY && userStore.setUkeyInfo({ pin: formData.newPin, keyCode: formData.keyCode })
     proxy.$modal.msgSuccess('PIN 码修改成功')
     open.value = false
   } finally {

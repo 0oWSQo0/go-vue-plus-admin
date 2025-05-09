@@ -5,14 +5,11 @@ import { ElMessageBox } from 'element-plus'
 import { loginOutApi } from '@/api/login'
 import { useTagsViewStore } from './tagsView'
 import router from '@/router'
-import { getConfigKey } from '@/api/system/config'
-import { get } from 'http'
 
 interface UserState {
   userInfo?: UserType
   token: string
   roleRouters?: string[] | AppCustomRouteRecordRaw[]
-  rememberMe: boolean
   loginInfo?: UserLoginType
   loginType?: string
   ukeyInfo?: any
@@ -24,8 +21,6 @@ export const useUserStore = defineStore('user', {
       userInfo: undefined,
       token: '',
       roleRouters: undefined,
-      // 记住我
-      rememberMe: true,
       loginInfo: undefined,
       loginType: 'account',
       ukeyInfo: undefined
@@ -40,9 +35,6 @@ export const useUserStore = defineStore('user', {
     },
     getRoleRouters(): string[] | AppCustomRouteRecordRaw[] | undefined {
       return this.roleRouters
-    },
-    getRememberMe(): boolean {
-      return this.rememberMe
     },
     getLoginInfo(): UserLoginType | undefined {
       return this.loginInfo
@@ -79,9 +71,6 @@ export const useUserStore = defineStore('user', {
     },
     logout() {
       this.reset()
-    },
-    setRememberMe(rememberMe: boolean) {
-      this.rememberMe = rememberMe
     },
     setLoginInfo(loginInfo: UserLoginType | undefined) {
       this.loginInfo = loginInfo

@@ -25,9 +25,8 @@ const handleQuery = async () => {
   getList()
 }
 const resetQuery = () => {
-  currentPage.value = 1
   pageSize.value = 10
-  getList()
+  handleQuery()
 }
 /**
  * 列表

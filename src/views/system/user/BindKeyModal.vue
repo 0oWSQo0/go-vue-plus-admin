@@ -16,7 +16,7 @@ import { LoginTypeEnum } from '@/views/Login/types'
 import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
-import { bindKeyApi } from '@/api/org/user'
+import { bindKeyApi } from '@/api/system/user'
 
 const { proxy } = getCurrentInstance() as any
 const emits = defineEmits(['submit'])
@@ -57,15 +57,15 @@ const submit = async () => {
   try {
     loading.value = true
     const formData = await getFormData()
-    const { hdevice } = await openDevice({ index: loginType === LoginTypeEnum.Default ? 0 : 1 })
+    const { hdevice } = await openDevice({ index: loginType === LoginTypeEnum.DEFAULT ? 0 : 1 })
     await createApp({ hdevice, appName: 'user', userPin: formData.pin })
     const happlication = await openApp({ hdevice, appName: 'user' })
     await checkPin({ happlication, pin: formData.pin })
     const hcontainer = await openContainer({ happlication, containerName: 'user' })
-    const csr = await generateCSR({ hdevice, hcontainer, szCN: formData.userName })
+    const Csr = await generateCSR({ hdevice, hcontainer, szCN: formData.username })
     const { serialnumber } = await getKeyInfo({ hdevice })
-    const { data }: any = await bindKeyApi({ crt: csr, serialNumber: serialnumber, userId: formData.userId })
-    await writeFile({ happlication, filename: 'user', data })
+    const { data }: any = await bindKeyApi({ Csr, keyCode: serialnumber, userId: formData.userId, userName: formData.username })
+    await writeFile({ happlication, filename: 'pkey', data })
     proxy.$modal.msgSuccess('绑定成功')
     emits('submit')
     open.value = false
@@ -81,8 +81,7 @@ const show = async (row: any) => {
   open.value = true
   reset()
   if (row) {
-    await nextTick()
-    setValues(row)
+    await setValues(row)
   }
 }
 

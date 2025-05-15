@@ -6,10 +6,10 @@ import { useRouter } from 'vue-router'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useValidator } from '@/hooks/useValidator'
 import { useUserStore } from '@/store/modules/user'
-// import { sm3 } from 'sm-crypto'
+import { sm3 } from 'sm-crypto'
 import { LoginTypeEnum } from './types'
 import { openDevice, openApp, getKeyInfo, checkPin, generateRandom, sm2Sign, sm3 as bsm3, openContainer } from '@/utils/BHA'
-// import { getConfigKey } from '@/api/system/config'
+import { getConfigKey } from '@/api/system/config'
 import { Base64 } from 'js-base64'
 
 const { proxy } = getCurrentInstance() as any
@@ -45,7 +45,7 @@ const handleLogin = async () => {
 const commonLogin = async () => {
   loading.value = true
   try {
-    const { data }: any = await loginApi({ ...unref(form), password: 'M/IZq/iWn6mAgH1SuJuM5g==' })
+    const { data }: any = await loginApi({ ...unref(form), password: sm3(unref(form).password) })
     userStore.setToken(data.token)
     const res: any = await getUserInfoApi()
     userStore.setUserInfo(res.data)
@@ -94,10 +94,11 @@ const ukeyLogin = async () => {
     }
     const buffer = new Uint8Array([...arr1, ...arr2])
     const randomAB = Base64.fromUint8Array(buffer)
-    const plaindata = await bsm3({ hdevice, hcontainer, indata: randomAB, withPublicKey: true, id: '1234567812345678' })
+    const plaindata = await bsm3({ hdevice, hcontainer, indata: randomAB, withPublicKey: true, id: 'MTIzNDU2NzgxMjM0NTY3OA==' })
     const signData = await sm2Sign({ hcontainer, plaindata })
     const obj = {
       ...unref(form),
+      password: sm3(unref(form).password),
       keyCode: serialnumber,
       randomA,
       randomB,
@@ -105,6 +106,7 @@ const ukeyLogin = async () => {
       signData
     }
     const res: any = await loginApi(obj)
+    loading.value = false
     // 首次登录的用户需要修改PIN码
     if (res.modify != 1) {
       changePinRef.value.show({ oldPin: unref(form).pin, keyCode: serialnumber, token: res.token })
@@ -129,11 +131,11 @@ watch(
 /**
  * 初始化登录方式
  */
-// const init = async () => {
-//   const { msg }: any = await getConfigKey('sys.loginType')
-//   userStore.setLoginType(msg)
-//   loginType.value = msg
-// }
+const init = async () => {
+  const { msg }: any = await getConfigKey('sys.loginType')
+  userStore.setLoginType(msg)
+  loginType.value = msg
+}
 
 // init()
 getCode()

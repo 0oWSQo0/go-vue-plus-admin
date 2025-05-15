@@ -1,13 +1,3 @@
-<template>
-  <Dialog v-model="open" :title="title" width="400">
-    <Form :rules="rules" :schema="schema" @register="formRegister" />
-    <template #footer>
-      <el-button @click="open = false">取 消</el-button>
-      <el-button type="primary" :loading="loading" @click="submit">确 定</el-button>
-    </template>
-  </Dialog>
-</template>
-
 <script setup lang="ts">
 import { listRoleApi, updateRoleApi } from '@/api/permission/role'
 import { useValidator } from '@/hooks/useValidator'
@@ -21,6 +11,12 @@ const { required, lengthRange } = useValidator()
 const { formRegister, formMethods } = useForm()
 const { setValues, getElFormExpose, getFormData } = formMethods
 
+const roleList = ref<any[]>([])
+const getRoleList = async () => {
+  const { data } = await listRoleApi({ pageSize: 100 })
+  roleList.value = data.list
+}
+
 const open = ref(false)
 const loading = ref(false)
 const title = ref('')
@@ -33,13 +29,14 @@ const schema = ref<FormSchema[]>([
     field: 'pid',
     label: '上级角色',
     component: 'TreeSelect',
+    value: 0,
     componentProps: {
       defaultExpandAll: true,
-      checkStrictly: true
-    },
-    optionApi: async () => {
-      const { data } = await listRoleApi({ pageSize: 100 })
-      return data.list
+      checkStrictly: true,
+      emptyValues: [0],
+      valueOnClear: 0,
+      props: { disabled: (data: any) => data.status === 2 },
+      data: roleList
     }
   },
   { field: 'name', label: '角色名称', component: 'Input', componentProps: { maxlength: 20 } },
@@ -72,12 +69,22 @@ const submit = async () => {
 const show = async (row: any) => {
   title.value = row ? '修改' : '新增'
   open.value = true
-  reset()
+  getRoleList()
+  await reset()
   if (row) {
-    await nextTick()
-    setValues(row)
+    await setValues(row)
   }
 }
 
 defineExpose({ show })
 </script>
+
+<template>
+  <Dialog v-model="open" :title="title" width="400">
+    <Form :rules="rules" :schema="schema" @register="formRegister" />
+    <template #footer>
+      <el-button @click="open = false">取 消</el-button>
+      <el-button type="primary" :loading="loading" @click="submit">确 定</el-button>
+    </template>
+  </Dialog>
+</template>

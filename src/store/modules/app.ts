@@ -16,7 +16,8 @@ interface AppState {
   size: boolean
   tagsView: boolean
   tagsViewIcon: boolean
-  logo: boolean
+  showLogo: boolean
+  showTitle: boolean
   fixedHeader: boolean
   greyMode: boolean
   dynamicRouter: boolean
@@ -50,7 +51,8 @@ export const useAppStore = defineStore('app', {
       size: true, // 尺寸图标
       tagsView: true, // 标签页
       tagsViewIcon: true, // 是否显示标签图标
-      logo: true, // logo
+      showLogo: false, // 左上logo
+      showTitle: true, //左上logo+title
       fixedHeader: true, // 固定toolheader
       footer: true, // 显示页脚
       greyMode: false, // 是否开始灰色模式，用于特殊悼念日
@@ -122,8 +124,11 @@ export const useAppStore = defineStore('app', {
     getTagsViewIcon(): boolean {
       return this.tagsViewIcon
     },
-    getLogo(): boolean {
-      return this.logo
+    getShowLogo(): boolean {
+      return this.showLogo
+    },
+    getShowTitle(): boolean {
+      return this.showTitle
     },
     getFixedHeader(): boolean {
       return this.fixedHeader
@@ -196,8 +201,11 @@ export const useAppStore = defineStore('app', {
     setTagsViewIcon(tagsViewIcon: boolean) {
       this.tagsViewIcon = tagsViewIcon
     },
-    setLogo(logo: boolean) {
-      this.logo = logo
+    setShowLogo(showLogo: boolean) {
+      this.showLogo = showLogo
+    },
+    setShowTitle(showTitle: boolean) {
+      this.showTitle = showTitle
     },
     setFixedHeader(fixedHeader: boolean) {
       this.fixedHeader = fixedHeader

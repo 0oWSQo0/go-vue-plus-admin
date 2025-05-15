@@ -14,12 +14,7 @@ const { sys_common_status } = proxy.useDict('sys_common_status')
 const showSearch = ref(true)
 const { searchRegister, searchMethods } = useSearch()
 const { getFormData } = searchMethods
-const searchSchema = reactive<FormSchema[]>([
-  { label: '登录地址', field: 'ipaddr', component: 'Input', componentProps: { maxlength: 20 } },
-  { label: '用户账号', field: 'userName', component: 'Input', componentProps: { maxlength: 20 } },
-  { label: '登录状态', field: 'status', component: 'Select', componentProps: { options: sys_common_status } },
-  { label: '登录时间', field: 'dateRange', component: 'DatePicker', componentProps: { type: 'daterange', valueFormat: 'YYYY-MM-DD', style: { width: '300px' } } }
-])
+const searchSchema = reactive<FormSchema[]>([{ label: '登录地址', field: 'ipaddr', component: 'Input', componentProps: { maxlength: 20 } }])
 const handleQuery = async () => {
   currentPage.value = 1
   getList()
@@ -43,10 +38,6 @@ const { loading, dataList, total, currentPage, pageSize } = tableState
 const { getList } = tableMethods
 const columns: TableColumn[] = [
   { field: 'userName', label: '用户账号' },
-  { field: 'ipaddr', label: 'IP 地址' },
-  { field: 'loginLocation', label: '登录地点' },
-  { field: 'os', label: '操作系统' },
-  { field: 'browser', label: '浏览器' },
   {
     field: 'status',
     label: '登录状态',

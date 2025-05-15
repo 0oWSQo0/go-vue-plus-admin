@@ -15,8 +15,13 @@ import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import type { FormSchema } from '@/components/Form'
 
+const sys_menu_types = [
+  { label: '目录', value: 1 },
+  { label: '菜单', value: 2 },
+  { label: '按钮', value: 3 }
+]
 const { proxy } = getCurrentInstance() as any
-const { sys_menu_types, sys_menu_component } = proxy.useDict('sys_menu_types', 'sys_menu_component')
+const { sys_menu_component } = proxy.useDict('sys_menu_component')
 const emits = defineEmits(['submit'])
 const { required } = useValidator()
 const { formRegister, formMethods } = useForm()
@@ -70,8 +75,8 @@ const schema = ref<FormSchema[]>([
   { field: 'path', label: '路由地址', component: 'Input', componentProps: { maxlength: 40 } },
   { field: 'name', label: '路由别名', component: 'Input', componentProps: { maxlength: 20 } },
   { field: 'component', label: '目录组件', value: 'LAYOUT', component: 'Select', componentProps: { options: sys_menu_component } },
-  { field: 'redirect', label: '默认跳转', component: 'Input', componentProps: { maxlength: 20 } },
-  { field: 'activeMenu', label: '高亮路由', component: 'Input', componentProps: { maxlength: 40 } },
+  { field: 'redirect', label: '默认跳转', component: 'Input', componentProps: { maxlength: 60 } },
+  { field: 'activeMenu', label: '高亮路由', component: 'Input', componentProps: { maxlength: 60 } },
   { field: 'sort', label: '显示排序', value: 0, component: 'InputNumber', componentProps: { min: 0, max: 1000, controlsPosition: 'right' } },
   {
     field: 'isFrame',
@@ -233,8 +238,8 @@ const show = async (row?: any) => {
   title.value = row.id ? '修改' : '新增'
   open.value = true
   reset()
+  handleChangeType(row.type || 1)
   if (row) {
-    handleChangeType(row.type)
     await nextTick()
     setValues(row)
   }

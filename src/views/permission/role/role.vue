@@ -112,6 +112,4 @@ const handleDelete = async (row: any) => {
   proxy.$modal.msgSuccess('删除成功')
   getList()
 }
-
-getList()
 </script>

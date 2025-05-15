@@ -1,19 +1,6 @@
-<template>
-  <content-wrap>
-    <div class="mb-2 flex justify-between">
-      <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-      <el-button type="warning" plain icon="Refresh" @click="handleRefreshCache">刷新缓存</el-button>
-      <right-toolbar :search="false" @queryTable="getList" />
-    </div>
-    <Table :columns="columns" :data="dataList" :loading="loading" @register="tableRegister" />
-
-    <EditModal ref="editRef" @submit="getList" />
-  </content-wrap>
-</template>
-
 <script setup name="Dict" lang="tsx">
 import { useDictStore } from '@/store/modules/dict'
-import { listTypeApi, delType } from '@/api/system/dict/type'
+import { listTypeApi, delTypeApi } from '@/api/system/dict/type'
 
 import EditModal from './EditModal.vue'
 import type { TableColumn } from '@/components/Table'
@@ -58,7 +45,26 @@ const columns: TableColumn[] = [
       }
     }
   },
-  { field: 'createdAt', label: '创建时间', width: 180 }
+  { field: 'remark', label: '备注信息', width: 180 },
+  {
+    field: 'action',
+    label: '操作',
+    width: 140,
+    slots: {
+      default: ({ row }) => {
+        return (
+          <>
+            <el-button link type="primary" icon="Edit" onClick={() => handleUpdate(row)}>
+              修改
+            </el-button>
+            <el-button link type="primary" icon="Delete" onClick={() => handleDelete(row)}>
+              删除
+            </el-button>
+          </>
+        )
+      }
+    }
+  }
 ]
 
 /**
@@ -75,7 +81,7 @@ const handleUpdate = async (row: any) => {
 /** 删除按钮操作 */
 const handleDelete = async (row: any) => {
   await proxy.$modal.confirm('是否确认删除数据项？')
-  await delType(row.id)
+  await delTypeApi({ id: row.id })
   proxy.$modal.msgSuccess('删除成功')
   getList()
 }
@@ -85,6 +91,17 @@ const handleRefreshCache = async () => {
   proxy.$modal.msgSuccess('刷新成功')
   useDictStore().cleanDict()
 }
-
-getList()
 </script>
+
+<template>
+  <content-wrap>
+    <div class="mb-2 flex justify-between">
+      <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+      <el-button type="warning" plain icon="Refresh" @click="handleRefreshCache">刷新缓存</el-button>
+      <right-toolbar :search="false" @queryTable="getList" />
+    </div>
+    <Table :columns="columns" :data="dataList" :loading="loading" @register="tableRegister" />
+
+    <EditModal ref="editRef" @submit="getList" />
+  </content-wrap>
+</template>

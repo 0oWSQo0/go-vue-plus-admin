@@ -23,11 +23,20 @@ module.exports = {
     if (name) {
       actions.push({
         type: 'add',
-        path: `./src/${path}/${upperFirstName}.vue`,
+        path: `./src/${path}/${upperFirstName}/index.vue`,
         templateFile: './plop/view/view.hbs',
         data: {
           name,
-          upperFirstName
+          upperFirstName,
+          path
+        }
+      }, {
+        type: 'add',
+        path: `./src/api/${path}/${upperFirstName}/index.ts`,
+        templateFile: './plop/view/api.hbs',
+        data: {
+          upperFirstName,
+          name
         }
       })
     }

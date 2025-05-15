@@ -177,7 +177,6 @@ const handleBindKey = async (row: any) => {
     bindRef.value.show({ ...row })
   }
 }
-getList()
 </script>
 
 <template>

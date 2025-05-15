@@ -24,7 +24,7 @@ const tagsView = computed(() => appStore.getTagsView)
 const collapse = computed(() => appStore.getCollapse)
 
 // logo
-const logo = computed(() => appStore.logo)
+const showTitle = computed(() => appStore.getShowTitle)
 
 // 固定头部
 const fixedHeader = computed(() => appStore.getFixedHeader)
@@ -40,7 +40,7 @@ export const useRenderLayout = () => {
     return (
       <>
         <div class={['absolute top-0 left-0 h-full layout-border__right', { '!fixed z-3000': mobile.value }]}>
-          {logo.value ? (
+          {showTitle.value ? (
             <Logo
               class={[
                 'bg-[var(--left-menu-bg-color)] relative',
@@ -53,7 +53,7 @@ export const useRenderLayout = () => {
               style="transition: all var(--transition-time-02);"
             ></Logo>
           ) : undefined}
-          <Menu class={[{ '!h-[calc(100%-var(--logo-height))]': logo.value }]}></Menu>
+          <Menu class={[{ '!h-[calc(100%-var(--logo-height))]': showTitle.value }]}></Menu>
         </div>
         <div
           class={[
@@ -110,7 +110,7 @@ export const useRenderLayout = () => {
     return (
       <>
         <div class="flex items-center bg-[var(--top-header-bg-color)] relative layout-border__bottom dark:bg-[var(--el-bg-color)]">
-          {logo.value ? <Logo class="custom-hover"></Logo> : undefined}
+          {showTitle.value ? <Logo class="custom-hover"></Logo> : undefined}
 
           <ToolHeader class="flex-1"></ToolHeader>
         </div>
@@ -169,7 +169,7 @@ export const useRenderLayout = () => {
             }
           ]}
         >
-          {logo.value ? <Logo class="custom-hover"></Logo> : undefined}
+          {showTitle.value ? <Logo class="custom-hover"></Logo> : undefined}
           <Menu class="flex-1 px-10px h-[var(--top-tool-height)]"></Menu>
           <ToolHeader></ToolHeader>
         </div>
@@ -216,7 +216,7 @@ export const useRenderLayout = () => {
     return (
       <>
         <div class="flex items-center bg-[var(--top-header-bg-color)] relative layout-border__bottom">
-          {logo.value ? <Logo class="custom-hover !pr-15px"></Logo> : undefined}
+          {showTitle.value ? <Logo class="custom-hover !pr-15px"></Logo> : undefined}
 
           <ToolHeader class="flex-1"></ToolHeader>
         </div>

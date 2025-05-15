@@ -5,9 +5,9 @@ export const listTypeApi = (params?: any): Promise<IResponse<any>> => {
 }
 
 export const updateTypeApi = (data: any): Promise<IResponse<any>> => {
-  return request.put({ url: '/system/dict/type', data })
+  return request.post({ url: '/admin/dictType/edit', data })
 }
 
-export const delType = (id: string): Promise<IResponse<any>> => {
-  return request.delete({ url: `/system/dict/type/${id}` })
+export const delTypeApi = (data: any): Promise<IResponse<any>> => {
+  return request.post({ url: '/admin/dictType/delete', data })
 }

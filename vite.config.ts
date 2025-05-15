@@ -43,7 +43,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         // 选项写法
         '/dev-api': {
-          target: 'https://hotgo.facms.cn',
+          target: 'http://172.16.10.90:8000',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dev-api/, '')
         }

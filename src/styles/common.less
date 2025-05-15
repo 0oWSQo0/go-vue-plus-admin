@@ -26,3 +26,15 @@
     margin-left: 4px;
   }
 }
+
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all 0.5s;
+}
+
+.fade-transform-enter-from,
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}

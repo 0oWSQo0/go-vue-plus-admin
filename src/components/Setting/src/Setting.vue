@@ -78,7 +78,8 @@ const copyConfig = async () => {
       // 标签页图标
       getTagsViewIcon: ${appStore.getTagsViewIcon},
       // logo
-      logo: ${appStore.getLogo},
+      showLogo: ${appStore.getShowLogo},
+      showTitle: ${appStore.getShowTitle},
       // 菜单手风琴
       uniqueOpened: ${appStore.getUniqueOpened},
       // 固定header

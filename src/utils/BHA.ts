@@ -299,14 +299,13 @@ export const enumFile = async ({ happlication }) => {
   return Promise.resolve(filelist || [])
 }
 export const writeFile = async ({ happlication, filename, data }) => {
-  const fileData = encodeURIComponent(JSON.stringify(data))
   const fileList = await enumFile({ happlication })
   if (fileList.includes(filename)) {
     await deleteFile({ happlication, filename })
   } else {
-    await createFile({ happlication, filename, filesize: fileData.length })
+    await createFile({ happlication, filename, filesize: data.length })
   }
-  const { rev } = await service({ order: SKFInterface.WriteFile, happlication, filename, offset: 0, data: window.btoa(fileData) })
+  const { rev } = await service({ order: SKFInterface.WriteFile, happlication, filename, offset: 0, data: Base64.encode(data) })
   if (rev != '0') {
     return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: '写入文件失败' })
   }
@@ -333,11 +332,11 @@ export const createFile = async ({ happlication, filename, filesize }) => {
  * @returns
  */
 const getFileInfo = async ({ happlication, filename }) => {
-  const { rev, fileInfo } = await service({ order: SKFInterface.FileInfo, happlication, filename })
+  const { rev, fileinfo } = await service({ order: SKFInterface.FileInfo, happlication, filename })
   if (rev != '0') {
     return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: '获取文件信息失败' })
   }
-  return Promise.resolve(fileInfo)
+  return Promise.resolve(fileinfo)
 }
 /**
  * 读取文件
@@ -347,11 +346,11 @@ const getFileInfo = async ({ happlication, filename }) => {
  */
 export const readFile = async ({ happlication, filename }) => {
   const fileInfo = await getFileInfo({ happlication, filename })
-  const { rev, data } = await service({ order: SKFInterface.ReadFile, happlication, filename, offset: 0, size: fileInfo.filesize })
+  const { rev, data } = await service({ order: SKFInterface.ReadFile, happlication, filename, offset: 0, size: fileInfo.file_size })
   if (rev != '0') {
     return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: '读取文件失败' })
   }
-  return Promise.resolve(data)
+  return Promise.resolve(Base64.decode(data))
 }
 
 /**
@@ -370,11 +369,11 @@ export const sm2Sign = async ({ hcontainer, plaindata }) => {
  * @returns
  */
 export const sm2Encrypt = async ({ hdevice, eccpublickeyblob, plaindata }) => {
-  const { rev, eccsignatureblob } = await service({ order: SKFInterface.sm2Encrypt, hdevice, plaindata, eccpublickeyblob })
+  const { rev, ecccipherblob } = await service({ order: SKFInterface.sm2Encrypt, hdevice, plaindata, eccpublickeyblob })
   if (rev != '0') {
     return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: 'sm2加密失败' })
   }
-  return Promise.resolve(eccsignatureblob)
+  return Promise.resolve(ecccipherblob)
 }
 
 export const sm3 = async ({ hdevice, hcontainer, indata, withPublicKey = false, id = 'null' }: { hdevice: string; hcontainer: string; indata: string; withPublicKey?: boolean; id?: string }) => {
@@ -382,18 +381,9 @@ export const sm3 = async ({ hdevice, hcontainer, indata, withPublicKey = false, 
   if (withPublicKey) {
     const res = await service({ order: SKFInterface.ExportPublicKey, hcontainer, signflag: 1 })
     eccpublickeyblob = res.publickeyblob
-    const arr: any[] = []
-    for (const ch of Base64.atob(eccpublickeyblob)) {
-      arr.push(ch.codePointAt(0))
-    }
   }
   const { hhash } = await service({ order: SKFInterface.SM3Hash, hdevice, algid: 1, eccpublickeyblob, id })
   const { digest } = await service({ order: SKFInterface.SM3Digest, hhash, indata })
-  const arr: any = []
-  for (const ch of Base64.atob(digest)) {
-    arr.push(ch.codePointAt(0))
-  }
-  console.log('sm3', arr)
   return Promise.resolve(digest)
 }
 /**
@@ -407,7 +397,7 @@ export const sm3 = async ({ hdevice, hcontainer, indata, withPublicKey = false, 
 export const sm4 = async ({ hdevice, key, plain }: { hdevice: string; key?: string; plain: string }) => {
   // 导入密钥
   const { hkey } = await service({ order: SKFInterface.ImportPublicKey, hdevice, key, algid: 1025 })
-  await service({ order: SKFInterface.SymmetricCryptoA, hkey, iv: null, paddingtype: 1 })
+  await service({ order: SKFInterface.SymmetricCryptoA, hkey, iv: 'null', paddingtype: 1 })
   const { rev, encrypt } = await service({ order: SKFInterface.SymmetricCryptoB, hkey, plain })
   if (rev != '0') {
     return Promise.reject({ msg: 'UKEY发生错误，请联系管理员', detail: '对称加密失败' })

@@ -97,7 +97,8 @@ const columns: TableColumn[] = [
  */
 const editRef = ref()
 const handleAdd = (row?: any) => {
-  editRef.value.show(row ? { pid: row.id, type: 2 } : null)
+  console.log(row.id)
+  editRef.value.show(row.id ? { pid: row.id, type: 2 } : {})
 }
 const handleUpdate = async (row: any) => {
   editRef.value.show(unref(row))
@@ -121,6 +122,4 @@ const toggleExpandAll = async () => {
   await nextTick()
   showTable.value = true
 }
-
-getList()
 </script>

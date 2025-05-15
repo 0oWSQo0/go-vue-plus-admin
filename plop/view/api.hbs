@@ -1,0 +1,13 @@
+import request from '@/axios'
+
+export const list{{upperFirstName}}Api = (params?: any): Promise<IResponse<any>> => {
+  return request.get({ url: '/admin/c/list', params })
+}
+
+export const update{{upperFirstName}}Api = (data: any): Promise<IResponse<any>> => {
+  return request.post({ url: '/admin/{{upperFirstName}}/edit', data })
+}
+
+export const del{{upperFirstName}}Api = (data: any): Promise<IResponse<any>> => {
+  return request.post({ url: '/admin/{{upperFirstName}}/delete', data })
+}

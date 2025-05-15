@@ -17,13 +17,13 @@ const greyMode = computed(() => appStore.getGreyMode)
 appStore.initTheme()
 
 if (appStore.getTipCount < 3) {
-  appStore.setTipCount(1)
+  appStore.setTipCount(appStore.getTipCount + 1)
   ElNotification({
     title: '提示',
     type: 'success',
-    duration: 10000,
+    duration: 8000,
     dangerouslyUseHTMLString: true,
-    message: '<div><p><strong>欢迎使用本系统！</strong></p></div>'
+    message: `<div><p><strong>欢迎使用${appStore.getTitle}！</strong></p></div>`
   })
 }
 </script>

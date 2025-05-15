@@ -70,7 +70,7 @@ const submit = async () => {
   loading.value = true
   try {
     const formData = await getFormData()
-    const { hdevice } = await openDevice({ index: loginType === 'ukey' ? 1 : 0 })
+    const { hdevice } = await openDevice({ index: 0 })
     const { serialnumber } = await getKeyInfo({ hdevice })
     if (serialnumber !== formData.keyCode) {
       proxy.$modal.msgError('非当前用户UKEY')
@@ -90,7 +90,7 @@ const submit = async () => {
 // 显示弹框
 const show = async (row: any) => {
   open.value = true
-  reset()
+  await reset()
   await setValues(row)
 }
 

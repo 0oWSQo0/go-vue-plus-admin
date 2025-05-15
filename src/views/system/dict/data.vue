@@ -1,19 +1,3 @@
-<template>
-  <content-wrap>
-    <el-page-header title="返回" content="字典数据" @back="handleClose" />
-    <el-divider />
-    <Search :schema="searchSchema" :search-loading="loading" :resetLoading="loading" v-show="showSearch" @search="handleQuery" @register="searchRegister" @reset="resetQuery" />
-
-    <div class="mb-2 flex justify-between">
-      <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
-    </div>
-    <Table :columns="columns" :data="dataList" :loading="loading" @register="tableRegister" />
-
-    <DataEditModal ref="editRef" @submit="getList" />
-  </content-wrap>
-</template>
-
 <script setup name="Data" lang="tsx">
 import { useDictStore } from '@/store/modules/dict'
 import { listDataApi, delDataApi } from '@/api/system/dict/data'
@@ -55,16 +39,17 @@ const { tableRegister, tableMethods, tableState } = useTable({
     return { list: data.list, total: data.totalCount }
   }
 })
-const { loading, dataList, currentPage, pageSize } = tableState
+const { loading, dataList, currentPage, pageSize, total } = tableState
 const { getList } = tableMethods
 const columns: TableColumn[] = [
   { field: 'type', label: '字典类型', minWidth: 180 },
   {
     field: 'label',
     label: '字典标签',
+    minWidth: 120,
     slots: {
       default: ({ row }) => {
-        return <el-tag type={row.listClass}>{row.label}</el-tag>
+        return <>{row.listClass ? <el-tag type={row.listClass}>{row.label}</el-tag> : row.label}</>
       }
     }
   },
@@ -116,7 +101,7 @@ const handleUpdate = async (row: any) => {
 /** 删除按钮操作 */
 const handleDelete = async (row: any) => {
   await proxy.$modal.confirm('是否确认删除字典数据项？')
-  await delDataApi(row.typeId)
+  await delDataApi({ id: row.id })
   getList()
   proxy.$modal.msgSuccess('删除成功')
   useDictStore().removeDict(row.typeId)
@@ -130,5 +115,20 @@ const handleClose = () => {
     push({ path: '/system/dict' })
   })
 }
-getList()
 </script>
+
+<template>
+  <content-wrap>
+    <el-page-header title="返回" content="字典数据" @back="handleClose" />
+    <el-divider />
+    <Search :schema="searchSchema" :search-loading="loading" :resetLoading="loading" v-show="showSearch" @search="handleQuery" @register="searchRegister" @reset="resetQuery" />
+
+    <div class="mb-2 flex justify-between">
+      <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
+    </div>
+    <Table v-model:pageSize="pageSize" v-model:currentPage="currentPage" :columns="columns" :pagination="{ total }" :data="dataList" :loading="loading" @register="tableRegister" />
+
+    <DataEditModal ref="editRef" @submit="getList" />
+  </content-wrap>
+</template>

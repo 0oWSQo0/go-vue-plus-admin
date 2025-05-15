@@ -26,9 +26,11 @@ const getCaches = computed((): string[] => {
   >
     <router-view>
       <template #default="{ Component, route }">
-        <keep-alive :include="getCaches">
-          <component :is="Component" :key="route.fullPath" />
-        </keep-alive>
+        <Transition name="fade-transform" mode="out-in">
+          <keep-alive :include="getCaches">
+            <component :is="Component" :key="route.fullPath" />
+          </keep-alive>
+        </Transition>
       </template>
     </router-view>
   </section>

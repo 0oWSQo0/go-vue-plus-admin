@@ -92,7 +92,7 @@ const handleLock = async () => {
 <template>
   <Dialog v-model="dialogVisible" width="500px" max-height="170px" :class="prefixCls" :title="dialogTitle">
     <div class="flex flex-col items-center">
-      <img src="@/assets/imgs/avatar.jpg" alt="" class="w-70px h-70px rounded-[50%]" />
+      <!----<img src="@/assets/imgs/avatar.jpg" alt="" class="w-70px h-70px rounded-[50%]" />-->
       <span class="text-14px my-10px text-[var(--top-header-text-color)]">Archer</span>
     </div>
     <Form :is-col="false" :schema="schema" :rules="rules" @register="formRegister" />

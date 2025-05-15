@@ -8,14 +8,10 @@ export const getDicts = (dictType: string): Promise<IResponse<any>> => {
   return request.get({ url: `/admin/dictData/option/${dictType}` })
 }
 
-export const listValueTypeApi = (): Promise<IResponse<any>> => {
-  return request.get({ url: '/admin/config/typeSelect' })
-}
-
 export const updateDataApi = (data: any): Promise<IResponse<any>> => {
   return request.post({ url: '/admin/dictData/edit', data })
 }
 
-export const delDataApi = (data: string): Promise<IResponse<any>> => {
+export const delDataApi = (data: any): Promise<IResponse<any>> => {
   return request.post({ url: 'admin/dictData/delete', data })
 }

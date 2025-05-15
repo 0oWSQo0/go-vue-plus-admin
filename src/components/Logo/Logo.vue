@@ -17,6 +17,8 @@ const layout = computed(() => appStore.getLayout)
 
 const collapse = computed(() => appStore.getCollapse)
 
+const showLogo = computed(() => appStore.getShowLogo)
+
 onMounted(() => {
   if (unref(collapse)) show.value = false
 })
@@ -54,7 +56,7 @@ watch(
       :class="[prefixCls, layout !== 'classic' ? `${prefixCls}__Top` : '', 'flex justify-center !h-[var(--logo-height)] items-center cursor-pointer relative decoration-none overflow-hidden']"
       to="/"
     >
-      <img src="@/assets/imgs/logo.png" class="w-[calc(var(--logo-height)-10px)] h-[calc(var(--logo-height)-20px)] mr-10px" />
+      <img v-if="showLogo" src="@/assets/imgs/logo.png" class="w-[calc(var(--logo-height)-10px)] h-[calc(var(--logo-height)-20px)] mr-10px" />
       <div
         v-if="show"
         :class="[

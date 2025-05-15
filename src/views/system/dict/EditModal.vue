@@ -15,13 +15,14 @@ const open = ref(false)
 const loading = ref(false)
 const title = ref('')
 const rules = ref<any>({
-  dictName: [required()],
-  dictType: [required()]
+  name: [required()],
+  type: [required()]
 })
 const schema = ref<FormSchema[]>([
-  { field: 'dictName', label: '字典名称', component: 'Input', componentProps: { maxlength: 20 } },
-  { field: 'dictType', label: '字典类型', component: 'Input', componentProps: { maxlength: 20 } },
-  { field: 'status', label: '字典状态', component: 'RadioButton', componentProps: { options: sys_normal_disable }, value: '0' },
+  { field: 'name', label: '字典名称', component: 'Input', componentProps: { maxlength: 20 } },
+  { field: 'type', label: '字典类型', component: 'Input', componentProps: { maxlength: 20 } },
+  { field: 'status', label: '字典状态', value: 1, component: 'RadioButton', componentProps: { options: sys_normal_disable } },
+  { field: 'sort', label: '显示排序', value: 0, component: 'InputNumber', componentProps: { min: 0, max: 1000, controlsPosition: 'right' } },
   { field: 'remark', label: '备注信息', component: 'Input', componentProps: { maxlength: 100, type: 'textarea', showWordLimit: true, autosize: { minRows: 2 } } }
 ])
 
@@ -48,9 +49,11 @@ const submit = async () => {
 const show = async (row: any) => {
   title.value = row ? '修改' : '新增'
   open.value = true
-  reset()
+  await reset()
   if (row) {
     await setValues(row)
+  } else {
+    await setValues({ pid: 0 })
   }
 }
 defineExpose({ show })

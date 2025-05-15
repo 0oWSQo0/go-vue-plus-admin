@@ -2,7 +2,7 @@
 import { useValidator } from '@/hooks/useValidator'
 import { useForm } from '@/hooks/useForm'
 import { FormSchema } from '@/components/Form'
-import { updateDataApi, listValueTypeApi } from '@/api/system/dict/data'
+import { updateDataApi } from '@/api/system/dict/data'
 import { useDictStore } from '@/store/modules/dict'
 import { listTypeApi } from '@/api/system/dict/type'
 
@@ -14,14 +14,36 @@ const { formRegister, formMethods } = useForm()
 const { setValues, getElFormExpose, getFormData } = formMethods
 
 // 数据标签回显样式
-const listClassOptions = ref([
-  { value: 'default', label: '主题色' },
+const listClassList = [
+  { value: '', label: '无样式' },
   { value: 'primary', label: '蓝色' },
   { value: 'success', label: '绿色' },
   { value: 'info', label: '灰色' },
   { value: 'warning', label: '橙色' },
   { value: 'danger', label: '红色' }
-])
+]
+
+const valueTypeList = [
+  { value: 'int', label: 'int', name: 'int' },
+  { value: 'string', label: 'string', name: 'string' },
+  { value: 'int8', label: 'int8', name: 'int8' },
+  { value: 'int16', label: 'int16', name: 'int16' },
+  { value: 'int32', label: 'int32', name: 'int32' },
+  { value: 'int64', label: 'int64', name: 'int64' },
+  { value: 'uint', label: 'uint', name: 'uint' },
+  { value: 'uint8', label: 'uint8', name: 'uint8' },
+  { value: 'uint16', label: 'uint16', name: 'uint16' },
+  { value: 'uint32', label: 'uint32', name: 'uint32' },
+  { value: 'uint64', label: 'uint64', name: 'uint64' },
+  { value: 'float32', label: 'float32', name: 'float32' },
+  { value: 'float64', label: 'float64', name: 'float64' },
+  { value: 'bool', label: 'bool', name: 'bool' },
+  { value: 'date', label: 'date', name: 'date' },
+  { value: 'datetime', label: 'datetime', name: 'datetime' },
+  { value: '[]string', label: '[]string', name: '[]string' },
+  { value: '[]int', label: '[]int', name: '[]int' },
+  { value: '[]int64', label: '[]int64', name: '[]int64' }
+]
 
 const open = ref(false)
 const loading = ref(false)
@@ -39,9 +61,7 @@ const schema = ref<FormSchema[]>([
     componentProps: {
       defaultExpandAll: true,
       checkStrictly: true,
-      props: {
-        value: 'id'
-      }
+      props: { value: 'id' }
     },
     optionApi: async () => {
       const { data } = await listTypeApi()
@@ -50,32 +70,19 @@ const schema = ref<FormSchema[]>([
   },
   { field: 'label', label: '数据标签', component: 'Input', componentProps: { maxlength: 20 } },
   { field: 'value', label: '数据键值', component: 'Input', componentProps: { maxlength: 20 } },
-  {
-    field: 'valueType',
-    label: '键值类型',
-    value: 'string',
-    component: 'Select',
-    componentProps: {},
-    optionApi: async () => {
-      const { data } = await listValueTypeApi()
-      return data
-    }
-  },
+  { field: 'valueType', label: '键值类型', value: 'int', component: 'Select', componentProps: { options: valueTypeList } },
   { field: 'sort', label: '显示排序', value: 0, component: 'InputNumber', componentProps: { maxlength: 6, controlsPosition: 'right', min: 0 } },
   {
     field: 'listClass',
     label: '回显样式',
-    value: 'default',
     component: 'Select',
     componentProps: {
-      options: listClassOptions,
-      slot: {
-        label: ({ item }) => {
-          return (
-            <>
-              <span>{item.label + '(' + item.value + ')'}</span>
-            </>
-          )
+      options: listClassList,
+      emptyValues: [undefined, null],
+      valueOnClear: null,
+      slots: {
+        optionDefault: (item: any) => {
+          return <>{item.value ? <el-tag type={item.value}>{item.label}</el-tag> : item.label}</>
         }
       }
     }
@@ -108,10 +115,10 @@ const submit = async () => {
 const show = async (row: any) => {
   title.value = row ? '修改' : '新增'
   open.value = true
-  reset()
-  await nextTick()
-  setValues(row)
+  await reset()
+  await setValues(row)
 }
+
 defineExpose({ show })
 </script>
 

@@ -3,7 +3,7 @@ import { blobValidate } from '@/utils/ryUtils'
 import { ElMessage } from 'element-plus'
 import request from '@/axios'
 
-const baseURL = import.meta.env.VITE_APP_BASE_API
+const baseURL = import.meta.env.VITE_API_BASE_PATH
 
 export default {
   async downloadGet({ url, params, fileName }: { url: string; params?: any; fileName?: string }) {

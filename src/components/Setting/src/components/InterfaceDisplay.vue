@@ -63,10 +63,14 @@ const tagsViewIconChange = (show: boolean) => {
 }
 
 // logo
-const logo = ref(appStore.getLogo)
+const showLogo = ref(appStore.getShowLogo)
+const showLogoChange = (show: boolean) => {
+  appStore.setShowLogo(show)
+}
 
-const logoChange = (show: boolean) => {
-  appStore.setLogo(show)
+const showTitle = ref(appStore.getShowTitle)
+const showTitleChange = (show: boolean) => {
+  appStore.setShowTitle(show)
 }
 
 // 菜单手风琴
@@ -162,8 +166,12 @@ watch(
     </div>
 
     <div class="flex justify-between items-center">
-      <span class="text-14px">Logo</span>
-      <ElSwitch v-model="logo" @change="logoChange" />
+      <span class="text-14px">展示Logo</span>
+      <ElSwitch v-model="showLogo" @change="showLogoChange" />
+    </div>
+    <div class="flex justify-between items-center">
+      <span class="text-14px">展示title</span>
+      <ElSwitch v-model="showTitle" @change="showTitleChange" />
     </div>
 
     <div class="flex justify-between items-center">

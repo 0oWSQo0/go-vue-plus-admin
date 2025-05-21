@@ -3,26 +3,25 @@ import { blobValidate } from '@/utils/ryUtils'
 import { ElMessage } from 'element-plus'
 import request from '@/axios'
 
-const baseURL = import.meta.env.VITE_API_BASE_PATH
-
 export default {
   async downloadGet({ url, params, fileName }: { url: string; params?: any; fileName?: string }) {
-    const res: any = await request.get({ url: baseURL + url, params, responseType: 'blob' })
+    const res: any = await request.get({ url, params, responseType: 'blob' })
     const isBlob = blobValidate(res.data)
     if (isBlob) {
       const blob = new Blob([res.data])
-      saveAs(blob, decodeURIComponent(res.headers['download-filename']) ?? fileName)
+      const name = res.headers['content-disposition'] ? res.headers['content-disposition'].split('filename=')[1] : fileName
+      saveAs(blob, name)
     } else {
       this.printErrMsg(res.data)
     }
   },
   async downloadPost({ url, data, fileName }: { url: string; data?: any; fileName?: string }) {
-    const res: any = await request.post({ url: baseURL + url, data, responseType: 'blob' })
+    const res: any = await request.post({ url, data, responseType: 'blob' })
     const isBlob = blobValidate(res.data)
     if (isBlob) {
       const blob = new Blob([res.data])
-      console.log(decodeURIComponent(res.headers['download-filename'] || fileName))
-      saveAs(blob, decodeURIComponent(res.headers['download-filename'] || fileName))
+      const name = res.headers['content-disposition'] ? res.headers['content-disposition'].split('filename=')[1] : fileName
+      saveAs(blob, name)
     } else {
       this.printErrMsg(res.data)
     }

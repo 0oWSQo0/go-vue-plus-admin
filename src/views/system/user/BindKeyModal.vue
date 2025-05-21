@@ -78,10 +78,14 @@ const submit = async () => {
 }
 
 const show = async (row: any) => {
-  open.value = true
-  reset()
-  if (row) {
+  try {
+    await openDevice({ index: loginType === LoginTypeEnum.DEFAULT ? 0 : 1 })
+    open.value = true
+    await reset()
     await setValues(row)
+  } catch (e: any) {
+    console.log(e)
+    e.msg && proxy.$modal.msgError(e.msg)
   }
 }
 

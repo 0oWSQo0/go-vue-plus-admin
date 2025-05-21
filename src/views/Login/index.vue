@@ -105,13 +105,17 @@ const ukeyLogin = async () => {
       randomAB,
       signData
     }
-    const res: any = await loginApi(obj)
+    const { data }: any = await loginApi(obj)
     loading.value = false
     // 首次登录的用户需要修改PIN码
-    if (res.modify != 1) {
-      changePinRef.value.show({ oldPin: unref(form).pin, keyCode: serialnumber, token: res.token })
+    if (data.modify != 1) {
+      changePinRef.value.show({ oldPin: unref(form).pin, keyCode: serialnumber, token: data.token })
     } else {
+      userStore.setToken(data.token)
+      const res: any = await getUserInfoApi()
+      userStore.setUserInfo(res.data)
       useUserStore().setUkeyInfo({ pin: unref(form).pin, keyCode: serialnumber })
+      push({ path: redirect.value || '/' })
     }
   } catch (e: any) {
     e.msg && proxy.$modal.msgError(e.msg)
